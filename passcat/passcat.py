@@ -43,9 +43,13 @@ def main():
     if path is None:
         path = '%s/wordlists/%s.txt' % (_dir, args.wordlist.lower())
     try:
+        if not path.endswith('.txt'):
+            raise ValueError("Passcat currently only supports text files.")
         with open(path) as f:
             words = f.read().splitlines()
-            f.close()
+    except ValueError as error:
+        print("Error:", error)
+        sys.exit()
     except FileNotFoundError:
         print("Error: File not found. Please input the path of an existing file "
                 "or use the '-l' flag to show available wordlists.")
