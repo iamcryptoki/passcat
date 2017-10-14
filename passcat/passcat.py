@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Passcat lets you generate cryptographically secure, memorable passphrases.
+
+Usage:
+    passcat [COUNT] [--file=f] [--help] [--list] [--version] [--wordlist=w]
+
+Options:
+    -f --file=f               Specify the path to an alternate wordlist.
+    -h --help                 Show this message.
+    -l --list                 Show available wordlists.
+    -v --version              Show version.
+    -w --wordlist=w           Specify a wordlist. [default: eff]
+"""
 
 import os
 import sys
+import docopt
 
-from argparse import ArgumentParser
+from . import __version__
 from random import SystemRandom
 
 _dir = os.path.dirname(os.path.abspath(__file__))
-
-def parse_arguments():
-    """
-    Parse command-line arguments.
-    """
-    parser = ArgumentParser()
-    parser.add_argument('-c', '--count', default=8, help="Number of words to use in the passphrase.")
-    parser.add_argument('-f', '--file', default=None, help="Path to an alternate wordlist.")
-    parser.add_argument('-l', '--list', action='store_true', help="Available wordlists.")
-    parser.add_argument('-w', '--wordlist', default='eff', help="Wordlist to use.")
-    return parser.parse_args()
 
 def wordlists():
     """
@@ -35,31 +38,30 @@ def generate(words, count):
     return ' '.join(SystemRandom().sample(words, count))
 
 def main():
-    args = parse_arguments()
-    path = args.file
-    if args.list:
+    args = docopt.docopt(__doc__, version=__version__)
+
+    if args['--list']:
         print('\n'.join(sorted(wordlists())))
-        sys.exit()
+        sys.exit(0)
+
+    path = args['--file']
     if path is None:
-        path = '%s/wordlists/%s.txt' % (_dir, args.wordlist.lower())
+        path = '%s/wordlists/%s.txt' % (_dir, args['--wordlist'].lower())
+
     try:
-        if not path.endswith('.txt'):
-            raise ValueError("Passcat currently only supports text files.")
         with open(path) as f:
             words = f.read().splitlines()
-    except ValueError as error:
-        print("Error:", error)
-        sys.exit()
     except FileNotFoundError:
-        print("Error: File not found. Please input the path of an existing file "
-                "or use the '-l' flag to show available wordlists.")
-        sys.exit()
+        print("File not found. Please input the path of an existing "
+              "file or use the '-l' flag to show available wordlists.")
+        sys.exit(1)
 
-    if not str(args.count).isdigit():
-        print("Error: Please input a valid number.")
-        sys.exit()
+    count = args['COUNT'] if args['COUNT'] is not None else 6
+    if not str(count).isdigit():
+        print("Please input a valid number.")
+        sys.exit(1)
 
-    passphrase = generate(words, int(args.count))
+    passphrase = generate(words, int(count))
     print(passphrase)
 
 if __name__ == '__main__':

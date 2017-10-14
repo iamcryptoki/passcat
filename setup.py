@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup
-
 import passcat
+
+from setuptools import setup
 
 setup(
     name='passcat',
-    version='0.1.0',
+    version=passcat.__version__,
     description='Passcat lets you generate cryptographically secure, memorable passphrases.',
     long_description=open('README.txt').read(),
     author='Galou Gentil',
@@ -19,6 +19,7 @@ setup(
     package_data={
         'passcat' : ['wordlists/*.txt']
     },
+    install_requires=['docopt'],
     entry_points={
         'console_scripts': [
             'passcat=passcat.passcat:main',

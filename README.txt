@@ -12,13 +12,13 @@ Basic usage:
 
 ```
 $ passcat
-throng disregard overall trimming playpen nape coke persevere
+throng disregard overall trimming playpen persevere
 ```
 
 Specify the number of words to use in the passphrase:
 
 ```
-$ passcat -c 5
+$ passcat 5
 relight usage geologic tumbling disown
 ```
 
