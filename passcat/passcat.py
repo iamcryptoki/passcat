@@ -19,7 +19,7 @@ import sys
 import docopt
 
 from . import __version__
-from random import SystemRandom
+from secrets import choice
 
 _dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -35,7 +35,7 @@ def generate(words, count):
     """
     Generate passphrase.
     """
-    return ' '.join(SystemRandom().sample(words, count))
+    return ' '.join(choice(words) for i in range(count))
 
 def main():
     args = docopt.docopt(__doc__, version=__version__)
